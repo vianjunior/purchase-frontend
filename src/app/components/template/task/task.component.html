@@ -1,0 +1,69 @@
+<mat-card>
+    <mat-card-title>
+        {{ title }}
+    </mat-card-title>
+    <form>
+        <mat-form-field>
+            <input matInput 
+                placeholder="Solicitante" 
+                name="solicitante"
+                [(ngModel)]="purchase.solicitante.nome" 
+                [readonly]="readOnlyField()"
+            >
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput 
+                placeholder="Produto"
+                name="descricao"
+                [(ngModel)]="purchase.produto.descricao" 
+                [readonly]="readOnlyField()"
+            >
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput
+                currencyMask
+                [options]="{ 
+                    align: 'left', 
+                    prefix: 'R$ ', 
+                    thousands: '.', 
+                    decimal: ',',
+                    max: '99999999999' 
+                }"
+                placeholder="Preço"
+                name="valorUnitario"
+                [(ngModel)]="purchase.produto.valorUnitario" 
+                [readonly]="readOnlyField()"
+            >
+        </mat-form-field>
+        <mat-form-field *ngIf="showField()">
+            <mat-label>Aprovação</mat-label>
+            <mat-select 
+                [(ngModel)]="purchase.aprovado"
+                [readonly]="readOnlyField()" 
+                name="aprovado" 
+                required>
+                    <mat-option disabled [value]="null">Selecione uma opção</mat-option>
+                    <mat-option [value]="true">Aprovado</mat-option>
+                    <mat-option [value]="false">Reprovado</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field *ngIf="showField()">
+            <textarea 
+                matInput 
+                placeholder="Observação" 
+                [(ngModel)]="purchase.observacao" 
+                name="observacao"
+                [readonly]="readOnlyField()"
+            >
+            </textarea>
+        </mat-form-field>
+    </form>
+
+    <button mat-raised-button (click)="handleSendTask()" color="primary">
+        Enviar
+    </button>
+    
+    <button mat-raised-button (click)="cancelPurchase()">
+        Cancelar
+    </button>
+</mat-card>

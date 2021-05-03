@@ -1,0 +1,58 @@
+<mat-expansion-panel>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Filtros
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <form id="filters">
+        <mat-form-field>
+            <input matInput 
+                placeholder="Solicitante" 
+                name="solicitante"
+                [(ngModel)]="filter.solicitante" 
+            >
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput 
+                placeholder="Produto"
+                name="descricao"
+                [(ngModel)]="filter.produto" 
+            >
+        </mat-form-field>
+        <mat-form-field *ngIf="showField()">
+            <mat-label>Aprovação</mat-label>
+            <mat-select 
+                [(ngModel)]="filter.aprovado" 
+                name="aprovado" 
+            >
+                <mat-option disabled [value]="null">Selecione uma opção</mat-option>
+                <mat-option [value]="true">Aprovados</mat-option>
+                <mat-option [value]="false">Reprovados</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+
+    <button mat-raised-button (click)="loadTaskList()" color="primary">
+        Filtrar
+    </button>
+    
+    <button mat-raised-button (click)="cleanFilter()">
+        Limpar Filtros
+    </button>
+</mat-expansion-panel>
+<div *ngFor="let purchase of purchases">
+    <mat-card mat-ripple 
+        class="list mat-elevation-z3" 
+        (click)="openToTask(purchase.id)"
+        *ngIf="showItem(purchase.passouPorAprovacao)"
+        >
+        <mat-card-title class="title">
+            Requisição de Compra nº {{purchase.id}}
+        </mat-card-title>
+        <mat-card-subtitle class="subtitle">
+            Item: {{purchase.produto.descricao}} |
+            Valor: {{purchase.produto.valorUnitario | currency: 'BRL'}} |
+            Solicitante: {{purchase.solicitante.nome}}
+        </mat-card-subtitle>
+    </mat-card>
+</div>
