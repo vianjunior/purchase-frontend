@@ -18,7 +18,8 @@ export class ListComponent implements OnInit {
   filter: Filter = {
     requesterName: '',
     product: '',
-    approved: null
+    position: '',
+    approved: ''
   }
 
   constructor(
@@ -53,11 +54,12 @@ export class ListComponent implements OnInit {
 
   loadTaskList(): void {
     if (this.type === 'approval') {
-      this.purchaseService.getPendingTasks(this.filter).subscribe(purchases => {
+      this.filter.position = 'aberto' // Somente abertas/pendentes de aprovação
+      this.purchaseService.getTasks(this.filter).subscribe(purchases => {
         this.purchases = purchases;
       });
     } else {
-      this.purchaseService.getAllTasks(this.filter).subscribe(purchases => {
+      this.purchaseService.getTasks(this.filter).subscribe(purchases => {
         this.purchases = purchases;
       });
     }
@@ -75,11 +77,16 @@ export class ListComponent implements OnInit {
     }
   }
 
+  canOpenToTask(): boolean {
+    return this.type === 'approval' ? true : false;
+  }
+
   cleanFilter(): void {
     this.filter = {
       requesterName: '',
       product: '',
-      approved: null,
+      position: '',
+      approved: ''
     };
   }
 

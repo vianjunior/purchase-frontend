@@ -32,19 +32,19 @@ export class PurchaseService {
     )
   }
 
-  getPendingTasks(filter: Filter): Observable<Purchase[]> {
-    return this.http.post<Purchase[]>(`${this.baseUrl}/getPendingTasks`, filter).pipe(
+  getTasks(filter: Filter): Observable<Purchase[]> {
+    return this.http.post<Purchase[]>(`${this.baseUrl}/getTasks`, filter).pipe(
       map((obj) => obj),
       catchError(e => this.errorHandler(e))
     )
   }
 
-  getAllTasks(filter: Filter): Observable<Purchase[]> {
-    return this.http.post<Purchase[]>(`${this.baseUrl}/getAllTasks`, filter).pipe(
-      map((obj) => obj),
-      catchError(e => this.errorHandler(e))
-    )
-  }
+  // getAllTasks(filter: Filter): Observable<Purchase[]> {
+  //   return this.http.post<Purchase[]>(`${this.baseUrl}/getAllTasks`, filter).pipe(
+  //     map((obj) => obj),
+  //     catchError(e => this.errorHandler(e))
+  //   )
+  // }
 
   getTaskById(id: number): Observable<Purchase> {
     return this.http.get<Purchase>(`${this.baseUrl}/getTaskById?id=${id}`).pipe(

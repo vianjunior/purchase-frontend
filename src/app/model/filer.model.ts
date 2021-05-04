@@ -1,5 +1,6 @@
 export interface Filter {
     requesterName: string,
     product: string,
-    approved: boolean
+    position: string,
+    approved: string
   }

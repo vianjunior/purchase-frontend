@@ -4,7 +4,9 @@
             Filtros
         </mat-panel-title>
     </mat-expansion-panel-header>
+
     <form id="filters">
+
         <mat-form-field>
             <input matInput 
                 placeholder="Solicitante" 
@@ -12,6 +14,7 @@
                 [(ngModel)]="filter.requesterName" 
             >
         </mat-form-field>
+
         <mat-form-field>
             <input matInput 
                 placeholder="Produto"
@@ -19,6 +22,19 @@
                 [(ngModel)]="filter.product" 
             >
         </mat-form-field>
+
+        <mat-form-field *ngIf="showField()">
+            <mat-label>Status</mat-label>
+            <mat-select 
+                [(ngModel)]="filter.position" 
+                name="aprovado" 
+            >
+                <mat-option disabled [value]="null">Selecione uma opção</mat-option>
+                <mat-option [value]="'aberto'">Aberto</mat-option>
+                <mat-option [value]="'concluido'">Concluído</mat-option>
+            </mat-select>
+        </mat-form-field>
+
         <mat-form-field *ngIf="showField()">
             <mat-label>Aprovação</mat-label>
             <mat-select 
@@ -26,10 +42,11 @@
                 name="aprovado" 
             >
                 <mat-option disabled [value]="null">Selecione uma opção</mat-option>
-                <mat-option [value]="true">Aprovados</mat-option>
-                <mat-option [value]="false">Reprovados</mat-option>
+                <mat-option [value]="'aprovado'">Aprovado</mat-option>
+                <mat-option [value]="'reprovado'">Reprovado</mat-option>
             </mat-select>
         </mat-form-field>
+
     </form>
 
     <button mat-raised-button (click)="loadTaskList()" color="primary">
@@ -40,10 +57,11 @@
         Limpar Filtros
     </button>
 </mat-expansion-panel>
+
 <div *ngFor="let purchase of purchases">
-    <mat-card mat-ripple 
-        class="list mat-elevation-z3" 
-        (click)="openToTask(purchase.purchaseId)"
+    <mat-card
+        class="list mat-elevation-z3 {{canOpenToTask() ? 'pendingTasks' : ''}}" 
+        (click)="canOpenToTask() ? openToTask(purchase.purchaseId) : angular.noop()"
         >
         <mat-card-title class="title">
             Requisição de Compra nº {{purchase.purchaseId}}

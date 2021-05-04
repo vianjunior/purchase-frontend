@@ -38,20 +38,20 @@
         <mat-form-field *ngIf="showField()">
             <mat-label>Aprovação</mat-label>
             <mat-select 
-                [(ngModel)]="purchase.approval.approved"
+                [(ngModel)]="purchase.approval"
                 [readonly]="readOnlyField()" 
                 name="aprovado" 
                 required>
                     <mat-option disabled [value]="null">Selecione uma opção</mat-option>
-                    <mat-option [value]="true">Aprovado</mat-option>
-                    <mat-option [value]="false">Reprovado</mat-option>
+                    <mat-option [value]="'aprovado'">Aprovado</mat-option>
+                    <mat-option [value]="'reprovado'">Reprovado</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field *ngIf="showField()">
             <textarea 
                 matInput 
                 placeholder="Observação" 
-                [(ngModel)]="purchase.approval.obs" 
+                [(ngModel)]="purchase.obs" 
                 name="observacao"
                 [readonly]="readOnlyField()"
             >
@@ -59,7 +59,7 @@
         </mat-form-field>
     </form>
 
-    <button mat-raised-button (click)="handleSendTask()" color="primary">
+    <button [disabled]="" mat-raised-button (click)="handleSendTask()" color="primary">
         Enviar
     </button>
     

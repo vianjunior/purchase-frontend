@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Approval } from 'src/app/model/approval.model';
 import { Product } from 'src/app/model/product.model';
 import { Purchase } from 'src/app/model/purchase.model';
 import { PurchaseService } from 'src/app/service/purchase.service';
@@ -31,19 +30,14 @@ export class TaskComponent implements OnInit {
     price: null
   }
 
-  approval: Approval = {
-    approved: null,
-    obs: ""
-  }
-
-
   purchase: Purchase = {
     requesterName: "",
     product: this.product,
-    hasApproval: false,
-    approval: this.approval,
-    startDate: this.getDateAsString(),
-    finishDate: null
+    position: "",
+    approval: "",
+    obs: "",
+    startDate: "",
+    finishDate: ""
   }
 
   getDateAsString(): string {
@@ -76,7 +70,6 @@ export class TaskComponent implements OnInit {
     if (!this.isNewTask) {
       this.purchaseService.getTaskById(this.paramId).subscribe((purchase) => {
         this.purchase = purchase;
-        this.purchase.approval = this.approval;
       })
     }
   }
@@ -99,10 +92,12 @@ export class TaskComponent implements OnInit {
 
   handleSendTask(): void {
     if (this.isNewTask) {
+      this.purchase.position = "aberto";
+      this.purchase.startDate = this.getDateAsString();
       this.createPurchase();
     } else {
-      this.purchase.hasApproval = true;
-      this.purchase.finishDate = this.getDateAsString()
+      this.purchase.position = "concluido";
+      this.purchase.finishDate = this.getDateAsString();
       this.updatePurchase();
     }
   }
