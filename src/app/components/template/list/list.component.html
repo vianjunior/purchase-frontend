@@ -9,20 +9,20 @@
             <input matInput 
                 placeholder="Solicitante" 
                 name="solicitante"
-                [(ngModel)]="filter.solicitante" 
+                [(ngModel)]="filter.requesterName" 
             >
         </mat-form-field>
         <mat-form-field>
             <input matInput 
                 placeholder="Produto"
                 name="descricao"
-                [(ngModel)]="filter.produto" 
+                [(ngModel)]="filter.product" 
             >
         </mat-form-field>
         <mat-form-field *ngIf="showField()">
             <mat-label>Aprovação</mat-label>
             <mat-select 
-                [(ngModel)]="filter.aprovado" 
+                [(ngModel)]="filter.approved" 
                 name="aprovado" 
             >
                 <mat-option disabled [value]="null">Selecione uma opção</mat-option>
@@ -43,16 +43,15 @@
 <div *ngFor="let purchase of purchases">
     <mat-card mat-ripple 
         class="list mat-elevation-z3" 
-        (click)="openToTask(purchase.id)"
-        *ngIf="showItem(purchase.passouPorAprovacao)"
+        (click)="openToTask(purchase.purchaseId)"
         >
         <mat-card-title class="title">
-            Requisição de Compra nº {{purchase.id}}
+            Requisição de Compra nº {{purchase.purchaseId}}
         </mat-card-title>
         <mat-card-subtitle class="subtitle">
-            Item: {{purchase.produto.descricao}} |
-            Valor: {{purchase.produto.valorUnitario | currency: 'BRL'}} |
-            Solicitante: {{purchase.solicitante.nome}}
+            Item: {{purchase.product.description}} |
+            Valor: {{purchase.product.price | currency: 'BRL'}} |
+            Solicitante: {{purchase.requesterName}}
         </mat-card-subtitle>
     </mat-card>
 </div>

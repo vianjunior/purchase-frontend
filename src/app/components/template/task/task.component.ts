@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Approval } from 'src/app/model/approval.model';
 import { Product } from 'src/app/model/product.model';
 import { Purchase } from 'src/app/model/purchase.model';
-import { Requester } from 'src/app/model/requester.model';
 import { PurchaseService } from 'src/app/service/purchase.service';
 import { HeaderService } from '../header/header.service';
 import { TaskService } from './task.service';
@@ -26,21 +26,29 @@ export class TaskComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  requester: Requester = {
-    nome: ""
+  product: Product = {
+    description: "",
+    price: null
   }
 
-  product: Product = {
-    descricao: "",
-    valorUnitario: null
+  approval: Approval = {
+    approved: null,
+    obs: ""
   }
+
 
   purchase: Purchase = {
-    solicitante: this.requester,
-    produto: this.product,
-    passouPorAprovacao: false,
-    aprovado: null,
-    observacao: ""
+    requesterName: "",
+    product: this.product,
+    hasApproval: false,
+    approval: this.approval,
+    startDate: this.getDateAsString(),
+    finishDate: null
+  }
+
+  getDateAsString(): string {
+    let date = new Date();
+    return date.toLocaleDateString();
   }
 
   get isNewTask(): boolean {
@@ -66,8 +74,9 @@ export class TaskComponent implements OnInit {
       routeUrl: '/'
     }
     if (!this.isNewTask) {
-      this.purchaseService.readById(this.paramId).subscribe((purchase) => {
+      this.purchaseService.getTaskById(this.paramId).subscribe((purchase) => {
         this.purchase = purchase;
+        this.purchase.approval = this.approval;
       })
     }
   }
@@ -92,7 +101,8 @@ export class TaskComponent implements OnInit {
     if (this.isNewTask) {
       this.createPurchase();
     } else {
-      this.purchase.passouPorAprovacao = true;
+      this.purchase.hasApproval = true;
+      this.purchase.finishDate = this.getDateAsString()
       this.updatePurchase();
     }
   }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EMPTY, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { Filter } from '../model/filer.model';
 
 import { Purchase } from '../model/purchase.model'
 
@@ -11,11 +12,46 @@ import { Purchase } from '../model/purchase.model'
 })
 export class PurchaseService {
 
-  baseUrl = " http://localhost:8081/server/rest/";
+  baseUrl = "http://localhost:8081/server/rest";
 
   constructor(
     private snackBar: MatSnackBar, 
     private http: HttpClient) { }
+
+  create(purchase: Purchase): Observable<any> {
+    return this.http.post<Purchase>(`${this.baseUrl}/create`, purchase).pipe(
+      map((obj) => obj),
+      catchError(e => this.errorHandler(e))
+    )
+  }
+
+  update(purchase: Purchase): Observable<any> {
+    return this.http.post<Purchase>(`${this.baseUrl}/update`, purchase).pipe(
+      map((obj) => obj),
+      catchError(e => this.errorHandler(e))
+    )
+  }
+
+  getPendingTasks(filter: Filter): Observable<Purchase[]> {
+    return this.http.post<Purchase[]>(`${this.baseUrl}/getPendingTasks`, filter).pipe(
+      map((obj) => obj),
+      catchError(e => this.errorHandler(e))
+    )
+  }
+
+  getAllTasks(filter: Filter): Observable<Purchase[]> {
+    return this.http.post<Purchase[]>(`${this.baseUrl}/getAllTasks`, filter).pipe(
+      map((obj) => obj),
+      catchError(e => this.errorHandler(e))
+    )
+  }
+
+  getTaskById(id: number): Observable<Purchase> {
+    return this.http.get<Purchase>(`${this.baseUrl}/getTaskById?id=${id}`).pipe(
+      map((obj) => obj),
+      catchError(e => this.errorHandler(e))
+    )
+  }
 
   showMessage(msg: string, isError: boolean = false): void {
     this.snackBar.open(msg, 'x', {
@@ -29,43 +65,6 @@ export class PurchaseService {
   errorHandler(e: any): Observable<any> {
     this.showMessage('Não foi possível conectar ao servidor', true);
     return EMPTY;
-  }
-
-  create(purchase: Purchase): Observable<Purchase> {
-    return this.http.post<Purchase>(this.baseUrl, purchase).pipe(
-      map((obj) => obj),
-      catchError(e => this.errorHandler(e))
-    )
-  }
-
-  readApprovalPending(): Observable<Purchase[]> {
-    return this.http.get<Purchase[]>(this.baseUrl).pipe(
-      map((obj) => obj),
-      catchError(e => this.errorHandler(e))
-    )
-  }
-
-  readAll(): Observable<Purchase[]> {
-    return this.http.get<Purchase[]>(`${this.baseUrl}readAll`).pipe(
-      map((obj) => obj),
-      catchError(e => this.errorHandler(e))
-    )
-  }
-
-  readById(id: number): Observable<Purchase> {
-    const url = `${this.baseUrl}/${id}`
-    return this.http.get<Purchase>(url).pipe(
-      map((obj) => obj),
-      catchError(e => this.errorHandler(e))
-    )
-  }
-
-  update(purchase: Purchase): Observable<Purchase> {
-    const url = `${this.baseUrl}/${purchase.id}`
-    return this.http.put<Purchase>(url, purchase).pipe(
-      map((obj) => obj),
-      catchError(e => this.errorHandler(e))
-    )
   }
   
 }

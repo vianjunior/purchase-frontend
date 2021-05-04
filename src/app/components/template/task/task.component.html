@@ -7,7 +7,7 @@
             <input matInput 
                 placeholder="Solicitante" 
                 name="solicitante"
-                [(ngModel)]="purchase.solicitante.nome" 
+                [(ngModel)]="purchase.requesterName" 
                 [readonly]="readOnlyField()"
             >
         </mat-form-field>
@@ -15,7 +15,7 @@
             <input matInput 
                 placeholder="Produto"
                 name="descricao"
-                [(ngModel)]="purchase.produto.descricao" 
+                [(ngModel)]="purchase.product.description" 
                 [readonly]="readOnlyField()"
             >
         </mat-form-field>
@@ -31,14 +31,14 @@
                 }"
                 placeholder="Preço"
                 name="valorUnitario"
-                [(ngModel)]="purchase.produto.valorUnitario" 
+                [(ngModel)]="purchase.product.price" 
                 [readonly]="readOnlyField()"
             >
         </mat-form-field>
         <mat-form-field *ngIf="showField()">
             <mat-label>Aprovação</mat-label>
             <mat-select 
-                [(ngModel)]="purchase.aprovado"
+                [(ngModel)]="purchase.approval.approved"
                 [readonly]="readOnlyField()" 
                 name="aprovado" 
                 required>
@@ -51,7 +51,7 @@
             <textarea 
                 matInput 
                 placeholder="Observação" 
-                [(ngModel)]="purchase.observacao" 
+                [(ngModel)]="purchase.approval.obs" 
                 name="observacao"
                 [readonly]="readOnlyField()"
             >

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Filter } from 'src/app/model/filer.model';
 import { Purchase } from 'src/app/model/purchase.model';
 import { PurchaseService } from 'src/app/service/purchase.service';
 import { HeaderService } from '../header/header.service';
@@ -14,10 +15,10 @@ export class ListComponent implements OnInit {
 
   purchases: Purchase[];
 
-  filter = {
-    solicitante: '',
-    produto: '',
-    aprovado: null,
+  filter: Filter = {
+    requesterName: '',
+    product: '',
+    approved: null
   }
 
   constructor(
@@ -52,11 +53,11 @@ export class ListComponent implements OnInit {
 
   loadTaskList(): void {
     if (this.type === 'approval') {
-      this.purchaseService.readApprovalPending().subscribe(purchases => {
+      this.purchaseService.getPendingTasks(this.filter).subscribe(purchases => {
         this.purchases = purchases;
       });
     } else {
-      this.purchaseService.readAll().subscribe(purchases => {
+      this.purchaseService.getAllTasks(this.filter).subscribe(purchases => {
         this.purchases = purchases;
       });
     }
@@ -66,23 +67,19 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/task/approval/${id}`]);
   }
 
-  showItem(passouPorAprovacao: boolean): boolean {
-    if (this.type === 'all') { 
-      return true;
-    } else if (!passouPorAprovacao) {
+  showField(): boolean {
+    if (this.type === 'approval') {
+      return false;
+    } else {
       return true;
     }
   }
 
-  showField(): boolean {
-    return true;
-  }
-
   cleanFilter(): void {
     this.filter = {
-      solicitante: '',
-      produto: '',
-      aprovado: null,
+      requesterName: '',
+      product: '',
+      approved: null,
     };
   }
 
