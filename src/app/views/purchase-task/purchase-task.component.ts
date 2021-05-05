@@ -22,7 +22,7 @@ export class PurchaseTaskComponent implements OnInit{
     const paramId = +this.rout.snapshot.paramMap.get('id');
 
     this.taskService.taskData = {
-      title: type === 'create' ? 'Nova Requisição de Compra' : 'Aprovação de Requisição',
+      title: type === 'create' ? 'Dados da Requisição de Compras' : 'Aprovação de Requisição',
       type: type,
       paramId: paramId ? paramId : null
     }

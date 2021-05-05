@@ -18,14 +18,14 @@ export class PurchaseService {
     private snackBar: MatSnackBar, 
     private http: HttpClient) { }
 
-  create(purchase: Purchase): Observable<any> {
+  create(purchase: any): Observable<any> {
     return this.http.post<Purchase>(`${this.baseUrl}/create`, purchase).pipe(
       map((obj) => obj),
       catchError(e => this.errorHandler(e))
     )
   }
 
-  update(purchase: Purchase): Observable<any> {
+  update(purchase: any): Observable<any> {
     return this.http.post<Purchase>(`${this.baseUrl}/update`, purchase).pipe(
       map((obj) => obj),
       catchError(e => this.errorHandler(e))
@@ -38,13 +38,6 @@ export class PurchaseService {
       catchError(e => this.errorHandler(e))
     )
   }
-
-  // getAllTasks(filter: Filter): Observable<Purchase[]> {
-  //   return this.http.post<Purchase[]>(`${this.baseUrl}/getAllTasks`, filter).pipe(
-  //     map((obj) => obj),
-  //     catchError(e => this.errorHandler(e))
-  //   )
-  // }
 
   getTaskById(id: number): Observable<Purchase> {
     return this.http.get<Purchase>(`${this.baseUrl}/getTaskById?id=${id}`).pipe(

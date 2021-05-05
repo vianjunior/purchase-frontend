@@ -2,64 +2,58 @@
     <mat-card-title>
         {{ title }}
     </mat-card-title>
-    <form>
+    <form [formGroup] = "purchaseForm">
         <mat-form-field>
             <input matInput 
                 placeholder="Solicitante" 
-                name="solicitante"
-                [(ngModel)]="purchase.requesterName" 
+                formControlName="requesterName"
                 [readonly]="readOnlyField()"
             >
         </mat-form-field>
-        <mat-form-field>
-            <input matInput 
-                placeholder="Produto"
-                name="descricao"
-                [(ngModel)]="purchase.product.description" 
-                [readonly]="readOnlyField()"
-            >
-        </mat-form-field>
-        <mat-form-field>
-            <input matInput
-                currencyMask
-                [options]="{ 
-                    align: 'left', 
-                    prefix: 'R$ ', 
-                    thousands: '.', 
-                    decimal: ',',
-                    max: '99999999999' 
-                }"
-                placeholder="Preço"
-                name="valorUnitario"
-                [(ngModel)]="purchase.product.price" 
-                [readonly]="readOnlyField()"
-            >
-        </mat-form-field>
+        <form-group formGroupName="product">
+            <mat-form-field>
+                <input matInput 
+                    placeholder="Produto"
+                    formControlName="description"
+                    [readonly]="readOnlyField()"
+                >
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput
+                    currencyMask
+                    [options]="{ 
+                        align: 'left', 
+                        prefix: 'R$ ', 
+                        thousands: '.', 
+                        decimal: ',',
+                        max: '99999999999' 
+                    }"
+                    placeholder="Preço"
+                    formControlName="price"
+                    [readonly]="readOnlyField()"
+                >
+            </mat-form-field>
+        </form-group>
         <mat-form-field *ngIf="showField()">
             <mat-label>Aprovação</mat-label>
             <mat-select 
-                [(ngModel)]="purchase.approval"
-                [readonly]="readOnlyField()" 
-                name="aprovado" 
-                required>
+                formControlName="approval"
+            >
                     <mat-option disabled [value]="null">Selecione uma opção</mat-option>
                     <mat-option [value]="'aprovado'">Aprovado</mat-option>
                     <mat-option [value]="'reprovado'">Reprovado</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field *ngIf="showField()">
-            <textarea 
+            <input
                 matInput 
                 placeholder="Observação" 
-                [(ngModel)]="purchase.obs" 
-                name="observacao"
-                [readonly]="readOnlyField()"
+                formControlName="obs"
             >
-            </textarea>
         </mat-form-field>
     </form>
 
-    <button [disabled]="" mat-raised-button (click)="handleSendTask()" color="primary">
+    <button [disabled]='purchaseForm.invalid' mat-raised-button (click)="handleSendTask()" color="primary">
         Enviar
     </button>
     

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Product } from 'src/app/model/product.model';
 import { Purchase } from 'src/app/model/purchase.model';
@@ -12,18 +13,6 @@ import { TaskService } from './task.service';
   styleUrls: ['./task.component.css']
 })
 export class TaskComponent implements OnInit {
-
-  constructor(
-    private purchaseService: PurchaseService,
-    private headerService: HeaderService,
-    private taskService: TaskService,
-    private router: Router,
-  ) {
-    this.createParamsToServices();
-  }
-
-  ngOnInit(): void {
-  }
 
   product: Product = {
     description: "",
@@ -40,9 +29,38 @@ export class TaskComponent implements OnInit {
     finishDate: ""
   }
 
-  getDateAsString(): string {
-    let date = new Date();
-    return date.toLocaleDateString();
+  purchaseForm: FormGroup;
+
+  constructor(
+    private purchaseService: PurchaseService,
+    private headerService: HeaderService,
+    private taskService: TaskService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+  ) {
+    this.createPurchaseForm();
+    this.createParamsToServices();
+  }
+
+  ngOnInit(): void {
+    this.controlApprovalChange();
+  }
+
+  createPurchaseForm() {
+    this.purchaseForm = this.formBuilder.group({
+      purchaseId: [null],
+      requesterName: ['', Validators.required],
+      product: this.formBuilder.group({
+        productId: [null],
+        description: ['', Validators.required],
+        price: [null, Validators.required]
+      }),
+      position: [''],
+      approval: ['', !this.isNewTask ? Validators.required : null],
+      obs: [''],
+      startDate: [''],
+      finishDate: [''],
+    })
   }
 
   get isNewTask(): boolean {
@@ -63,15 +81,53 @@ export class TaskComponent implements OnInit {
 
   createParamsToServices(): void {
     this.headerService.headerData = {
-      title: this.title,
+      title: 'Criar Requisição',
       icon: 'storefront',
       routeUrl: '/'
     }
     if (!this.isNewTask) {
       this.purchaseService.getTaskById(this.paramId).subscribe((purchase) => {
-        this.purchase = purchase;
+        this.purchaseForm.patchValue(purchase);
       })
     }
+  }
+
+  handleSendTask(): void {
+    if (this.isNewTask) {
+      this.purchaseForm.patchValue({position: 'aberto'});
+      this.purchaseForm.patchValue({startDate: this.getDateAsString()});
+      this.createPurchase();
+    } else {
+      this.purchaseForm.patchValue({position: 'concluido'});
+      this.purchaseForm.patchValue({finishDate: this.getDateAsString()});
+      this.updatePurchase();
+    }
+  }
+
+  createPurchase(): void {
+    this.purchaseService.create(this.purchaseForm.value).subscribe(() => {
+      this.purchaseService.showMessage('Operação realizada com sucesso!');
+      this.router.navigate(['/']);
+    })
+  }
+
+  updatePurchase(): void {
+    this.purchaseService.update(this.purchaseForm.value).subscribe(() => {
+      this.purchaseService.showMessage("Operação realizada com sucesso!");
+      this.router.navigate(["/"]);
+    });
+  }
+
+  controlApprovalChange(): void {
+    const obsControl = this.purchaseForm.get('obs')
+    this.purchaseForm.get('approval').valueChanges.subscribe((approval: string) => {
+      if (approval === 'reprovado') {
+        obsControl.setValidators([Validators.required]);
+      } else {
+        obsControl.clearValidators();
+      }
+      obsControl.updateValueAndValidity();
+    });
   }
 
   showField(): boolean {
@@ -90,30 +146,9 @@ export class TaskComponent implements OnInit {
     }
   }
 
-  handleSendTask(): void {
-    if (this.isNewTask) {
-      this.purchase.position = "aberto";
-      this.purchase.startDate = this.getDateAsString();
-      this.createPurchase();
-    } else {
-      this.purchase.position = "concluido";
-      this.purchase.finishDate = this.getDateAsString();
-      this.updatePurchase();
-    }
-  }
-
-  createPurchase(): void {
-    this.purchaseService.create(this.purchase).subscribe(() => {
-      this.purchaseService.showMessage('Operação realizada com sucesso!');
-      this.router.navigate(['/']);
-    })
-  }
-
-  updatePurchase(): void {
-    this.purchaseService.update(this.purchase).subscribe(() => {
-      this.purchaseService.showMessage("Operação realizada com sucesso!");
-      this.router.navigate(["/"]);
-    });
+  getDateAsString(): string {
+    let date = new Date();
+    return date.toLocaleDateString();
   }
 
   cancelPurchase(): void {

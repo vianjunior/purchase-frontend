@@ -1,75 +1,73 @@
-<mat-expansion-panel>
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            Filtros
-        </mat-panel-title>
-    </mat-expansion-panel-header>
+<ng-container>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Filtros
+            </mat-panel-title>
+        </mat-expansion-panel-header>
 
-    <form id="filters">
+        <form [formGroup] = "filterForm">
 
-        <mat-form-field>
-            <input matInput 
-                placeholder="Solicitante" 
-                name="solicitante"
-                [(ngModel)]="filter.requesterName" 
+            <mat-form-field>
+                <input matInput 
+                    placeholder="Solicitante" 
+                    formControlName="requesterName"
+                >
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput 
+                    placeholder="Produto"
+                    formControlName="product"
+                >
+            </mat-form-field>
+
+            <mat-form-field *ngIf="showField()">
+                <mat-label>Status</mat-label>
+                <mat-select 
+                    formControlName="position" 
+                >
+                    <mat-option disabled [value]="null">Selecione uma opção</mat-option>
+                    <mat-option [value]="'aberto'">Aberto</mat-option>
+                    <mat-option [value]="'concluido'">Concluído</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="showField()">
+                <mat-label>Aprovação</mat-label>
+                <mat-select 
+                    formControlName="approved" 
+                >
+                    <mat-option disabled [value]="null">Selecione uma opção</mat-option>
+                    <mat-option [value]="'aprovado'">Aprovado</mat-option>
+                    <mat-option [value]="'reprovado'">Reprovado</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </form>
+
+        <button mat-raised-button (click)="loadTaskList()" color="primary">
+            Filtrar
+        </button>
+        
+        <button mat-raised-button (click)="cleanFilter()">
+            Limpar Filtros
+        </button>
+    </mat-expansion-panel>
+
+    <div *ngFor="let purchase of purchases">
+        <mat-card
+            class="list mat-elevation-z3 {{canOpenToTask() ? 'pendingTasks' : ''}}" 
+            (click)="canOpenToTask() ? openToTask(purchase.purchaseId) : null"
             >
-        </mat-form-field>
-
-        <mat-form-field>
-            <input matInput 
-                placeholder="Produto"
-                name="descricao"
-                [(ngModel)]="filter.product" 
-            >
-        </mat-form-field>
-
-        <mat-form-field *ngIf="showField()">
-            <mat-label>Status</mat-label>
-            <mat-select 
-                [(ngModel)]="filter.position" 
-                name="aprovado" 
-            >
-                <mat-option disabled [value]="null">Selecione uma opção</mat-option>
-                <mat-option [value]="'aberto'">Aberto</mat-option>
-                <mat-option [value]="'concluido'">Concluído</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field *ngIf="showField()">
-            <mat-label>Aprovação</mat-label>
-            <mat-select 
-                [(ngModel)]="filter.approved" 
-                name="aprovado" 
-            >
-                <mat-option disabled [value]="null">Selecione uma opção</mat-option>
-                <mat-option [value]="'aprovado'">Aprovado</mat-option>
-                <mat-option [value]="'reprovado'">Reprovado</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-    </form>
-
-    <button mat-raised-button (click)="loadTaskList()" color="primary">
-        Filtrar
-    </button>
-    
-    <button mat-raised-button (click)="cleanFilter()">
-        Limpar Filtros
-    </button>
-</mat-expansion-panel>
-
-<div *ngFor="let purchase of purchases">
-    <mat-card
-        class="list mat-elevation-z3 {{canOpenToTask() ? 'pendingTasks' : ''}}" 
-        (click)="canOpenToTask() ? openToTask(purchase.purchaseId) : angular.noop()"
-        >
-        <mat-card-title class="title">
-            Requisição de Compra nº {{purchase.purchaseId}}
-        </mat-card-title>
-        <mat-card-subtitle class="subtitle">
-            Item: {{purchase.product.description}} |
-            Valor: {{purchase.product.price | currency: 'BRL'}} |
-            Solicitante: {{purchase.requesterName}}
-        </mat-card-subtitle>
-    </mat-card>
-</div>
+            <mat-card-title class="title">
+                Requisição de Compra nº {{purchase.purchaseId}}
+            </mat-card-title>
+            <mat-card-subtitle class="subtitle">
+                Item: {{purchase.product.description}} |
+                Valor: {{purchase.product.price | currency: 'BRL'}} |
+                Solicitante: {{purchase.requesterName}}
+            </mat-card-subtitle>
+        </mat-card>
+    </div>
+</ng-container>

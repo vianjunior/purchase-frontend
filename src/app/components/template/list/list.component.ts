@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Filter } from 'src/app/model/filer.model';
 import { Purchase } from 'src/app/model/purchase.model';
@@ -22,18 +23,31 @@ export class ListComponent implements OnInit {
     approved: ''
   }
 
+  filterForm: FormGroup;
+
   constructor(
     private purchaseService: PurchaseService,
     private headerService: HeaderService,
-    private listService: ListService, 
+    private listService: ListService,
+    private formBuilder: FormBuilder, 
     private router: Router
   ) {
+    this.createFilterForm();
     this.createParamsToServices();
     this.loadTaskList();
   }
 
   ngOnInit(): void {
     
+  }
+
+  createFilterForm() {
+    this.filterForm = this.formBuilder.group({
+      requesterName: [''],
+      product: [''],
+      position: [''],
+      approved: ['']
+    })
   }
 
   get title(): string {
@@ -54,12 +68,12 @@ export class ListComponent implements OnInit {
 
   loadTaskList(): void {
     if (this.type === 'approval') {
-      this.filter.position = 'aberto' // Somente abertas/pendentes de aprovação
-      this.purchaseService.getTasks(this.filter).subscribe(purchases => {
+      this.filterForm.patchValue({position: 'aberto'}); // Somente abertas/pendentes de aprovação
+      this.purchaseService.getTasks(this.filterForm.value).subscribe(purchases => {
         this.purchases = purchases;
       });
     } else {
-      this.purchaseService.getTasks(this.filter).subscribe(purchases => {
+      this.purchaseService.getTasks(this.filterForm.value).subscribe(purchases => {
         this.purchases = purchases;
       });
     }
@@ -82,12 +96,8 @@ export class ListComponent implements OnInit {
   }
 
   cleanFilter(): void {
-    this.filter = {
-      requesterName: '',
-      product: '',
-      position: '',
-      approved: ''
-    };
+    this.filterForm.patchValue(this.filter);
+    this.loadTaskList();
   }
 
 }
